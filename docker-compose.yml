@@ -1,0 +1,80 @@
+services:
+  kafka:
+    image: apache/kafka:3.7.0
+    container_name: hn-at-kafka
+    ports:
+      - "9093:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9094
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9094
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+      CLUSTER_ID: HNATCluster01
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: hn-at-postgres
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-activethread}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
+      POSTGRES_DB: ${POSTGRES_DB:-activethread_db}
+    volumes:
+      - hn_postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  ingester:
+    build: ./services/ingester
+    container_name: hn-at-ingester
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_BROKER: kafka:9092
+    restart: unless-stopped
+
+  processor:
+    build: ./services/processor
+    container_name: hn-at-processor
+    depends_on:
+      - kafka
+      - postgres
+    environment:
+      KAFKA_BROKER: kafka:9092
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER:-activethread}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-activethread_dev}
+      DB_NAME: ${POSTGRES_DB:-activethread_db}
+    restart: unless-stopped
+
+  api:
+    build: ./services/api
+    container_name: hn-at-api
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER:-activethread}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-activethread_dev}
+      DB_NAME: ${POSTGRES_DB:-activethread_db}
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: hn-at-frontend
+    ports:
+      - "3002:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  hn_postgres_data:

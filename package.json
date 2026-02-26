@@ -1,0 +1,26 @@
+{
+  "name": "hn-activethread",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Real-time HackerNews analytics platform",
+  "workspaces": [
+    "services/*",
+    "infra",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:ingester": "npm -w services/ingester run dev",
+    "dev:processor": "npm -w services/processor run dev",
+    "dev:api": "npm -w services/api run dev",
+    "db:migrate": "node scripts/migrate.js"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "dependencies": {
+    "@eslint/js": "^9.39.1",
+    "@tailwindcss/vite": "^4.1.18",
+    "@types/react": "^19.2.7",
+    "pg": "^8.18.0"
+  }
+}

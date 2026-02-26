@@ -1,0 +1,15 @@
+{
+  "name": "@activethread/processor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Stream processor — consumes events from Kafka and writes to Postgres",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "kafkajs": "^2.2.4",
+    "pg": "^8.18.0"
+  }
+}
