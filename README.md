@@ -1,5 +1,7 @@
 # HN ActiveThread
 
+**Live:** https://hnactivethread.duckdns.org
+
 A real-time dashboard that tracks which HackerNews stories are getting the most comments right now. Started as a Reddit monitor but Reddit's API blocks requests from cloud IPs, so I switched to HackerNews. It polls the HN API every 30 seconds, moves data through a Kafka pipeline, stores it in Postgres, and serves it to a React frontend — all running in Docker.
 
 ---
