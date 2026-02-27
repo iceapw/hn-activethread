@@ -41,18 +41,10 @@ HN Firebase API
 
 ---
 
-## Files
-
 ```
-services/api/src/
-  index.js            serves /api/trending and /api/comments/latest to the frontend
-
-frontend/src/
-  hooks/useApi.js     fetches from the API and re-fetches every 30s
-  components/
-    TrendingTable.jsx ranked list of stories by comment count, links to HN
-    EventFeed.jsx     live scrolling feed of latest comments
-  App.jsx             root layout, wires both components together
+docker-compose.yml
+services/
+frontend/
 ```
 
 ---
