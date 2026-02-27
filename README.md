@@ -41,13 +41,6 @@ HN Firebase API
 
 ---
 
-```
-docker-compose.yml
-services/
-frontend/
-```
-
----
 
 ## Key Functions
 
